@@ -1,31 +1,11 @@
 # web-park
 
-Interaktivní webová stránka.
+Interaktivní webová stránka **Park Bistro**.
 
-## Aktuální struktura
+## Nasazení
 
-```text
-web-park/
-├── index.html
-├── assets/
-│   ├── css/
-│   │   └── style.css
-│   ├── js/
-│   │   └── app.js
-│   └── images/
-│       └── .gitkeep
-├── .gitignore
-└── README.md
-```
+Projekt je připravený pro GitHub Pages. Změny na `main` se automaticky nasazují pomocí GitHub Actions.
 
 ## Spuštění
 
-Projekt zatím nevyžaduje build systém. Stačí otevřít `index.html` v prohlížeči.
-
-## Další vývoj
-
-- návrh finálního vzhledu
-- interaktivní komponenty
-- obsah webu
-- případné napojení na API nebo backend
-- nasazení přes GitHub Pages
+Projekt nevyžaduje build systém. Stačí otevřít `index.html` v prohlížeči.
