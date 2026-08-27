@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="web-park – interaktivní webová stránka">
+  <title>web-park</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="container nav">
+      <a class="logo" href="#">web-park</a>
+      <button class="menu-toggle" type="button" aria-label="Otevřít menu" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="#home">Domů</a></li>
+        <li><a href="#about">O projektu</a></li>
+        <li><a href="#contact">Kontakt</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <div class="container">
+        <p class="eyebrow">Interaktivní webový projekt</p>
+        <h1>Vítej ve <span>web-parku</span>.</h1>
+        <p class="hero-text">Základní kostra projektu je připravena. Teď ji můžeme společně proměnit v interaktivní web.</p>
+        <button id="cta-button" class="button" type="button">Vyzkoušet interakci</button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="container">
+        <h2>Základ projektu</h2>
+        <div class="cards">
+          <article class="card"><h3>HTML</h3><p>Struktura a obsah webu.</p></article>
+          <article class="card"><h3>CSS</h3><p>Responzivní vzhled a komponenty.</p></article>
+          <article class="card"><h3>JavaScript</h3><p>Interaktivita a chování aplikace.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section section-alt">
+      <div class="container">
+        <h2>Další krok</h2>
+        <p>Sem postupně doplníme konkrétní funkce web-parku.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">&copy; 2026 web-park</div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
