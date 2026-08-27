@@ -1,59 +1,20 @@
 <!doctype html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="web-park – interaktivní webová stránka">
-  <title>web-park</title>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#24452f">
+  <meta name="description" content="Park Bistro – malé bistro uprostřed zeleně."><title>Park Bistro | Káva, dobroty a pohoda v parku</title>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-  <header class="site-header">
-    <nav class="container nav">
-      <a class="logo" href="#">web-park</a>
-      <button class="menu-toggle" type="button" aria-label="Otevřít menu" aria-expanded="false">☰</button>
-      <ul class="nav-links">
-        <li><a href="#home">Domů</a></li>
-        <li><a href="#about">O projektu</a></li>
-        <li><a href="#contact">Kontakt</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <main>
-    <section id="home" class="hero">
-      <div class="container">
-        <p class="eyebrow">Interaktivní webový projekt</p>
-        <h1>Vítej ve <span>web-parku</span>.</h1>
-        <p class="hero-text">Základní kostra projektu je připravena. Teď ji můžeme společně proměnit v interaktivní web.</p>
-        <button id="cta-button" class="button" type="button">Vyzkoušet interakci</button>
-        <p id="status" class="status" role="status" aria-live="polite"></p>
-      </div>
-    </section>
-
-    <section id="about" class="section">
-      <div class="container">
-        <h2>Základ projektu</h2>
-        <div class="cards">
-          <article class="card"><h3>HTML</h3><p>Struktura a obsah webu.</p></article>
-          <article class="card"><h3>CSS</h3><p>Responzivní vzhled a komponenty.</p></article>
-          <article class="card"><h3>JavaScript</h3><p>Interaktivita a chování aplikace.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section id="contact" class="section section-alt">
-      <div class="container">
-        <h2>Další krok</h2>
-        <p>Sem postupně doplníme konkrétní funkce web-parku.</p>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">&copy; 2026 web-park</div>
-  </footer>
-
-  <script src="assets/js/app.js"></script>
-</body>
-</html>
+<header class="site-header"><nav class="nav container" aria-label="Hlavní navigace">
+  <a class="logo" href="#home">🌿 Park Bistro</a><button class="menu-toggle" type="button" aria-label="Otevřít menu" aria-expanded="false">☰</button>
+  <ul class="nav-links"><li><a href="#menu">Menu</a></li><li><a href="#story">O bistru</a></li><li><a href="#visit">Kde nás najdeš</a></li></ul>
+</nav></header>
+<main id="home">
+<section class="hero"><div class="container hero-grid"><div><p class="eyebrow">☀️ Otevřeno dnes · 8:00–20:00</p><h1>Dobré věci chutnají nejlíp <em>venku.</em></h1><p class="hero-text">Malé sousedské bistro pod stromy. Výběrová káva, domácí limonády, snídaně a něco sladkého ke každé procházce.</p><div class="hero-actions"><a class="button" href="#menu">Prohlédnout menu</a><a class="button secondary" href="#visit">Jak se k nám dostat</a></div></div><div class="hero-card"><span class="sun">☀️</span><p>Dnešní tip</p><strong>Citronový koláč<br>s domácí šlehačkou</strong><span class="price">89 Kč</span></div></div></section>
+<section id="menu" class="section"><div class="container"><div class="section-heading"><div><p class="eyebrow">Co dnes voní z kuchyně</p><h2>Naše menu</h2></div><div class="filters" role="group" aria-label="Filtrovat menu"><button class="filter active" data-filter="all">Všechno</button><button class="filter" data-filter="coffee">Káva</button><button class="filter" data-filter="food">Jídlo</button><button class="filter" data-filter="sweet">Sladké</button></div></div>
+<div class="menu-grid"><article class="menu-item" data-category="coffee"><span class="item-icon">☕</span><div><h3>Flat White</h3><p>Dvojité espresso, sametové mléko</p></div><strong>65 Kč</strong></article><article class="menu-item" data-category="coffee"><span class="item-icon">🧊</span><div><h3>Espresso Tonic</h3><p>Espresso, tonic, limeta a led</p></div><strong>79 Kč</strong></article><article class="menu-item" data-category="food"><span class="item-icon">🥪</span><div><h3>Parkový toast</h3><p>Čedar, šunka, dijonská hořčice</p></div><strong>119 Kč</strong></article><article class="menu-item" data-category="food"><span class="item-icon">🥗</span><div><h3>Letní miska</h3><p>Pečená zelenina, feta, bylinky</p></div><strong>149 Kč</strong></article><article class="menu-item" data-category="sweet"><span class="item-icon">🍋</span><div><h3>Citronový koláč</h3><p>Domácí, svěží a právě upečený</p></div><strong>89 Kč</strong></article><article class="menu-item" data-category="sweet"><span class="item-icon">🍪</span><div><h3>Sušenka s čokoládou</h3><p>Křupavá na okraji, vláčná uvnitř</p></div><strong>49 Kč</strong></article></div></div></section>
+<section id="story" class="section story"><div class="container story-grid"><div><p class="eyebrow">Náš malý kout pod stromy</p><h2>Místo, kde se nikam nespěchá.</h2><p>Park Bistro vzniklo z jednoduché myšlenky: udělat dobré jídlo a kávu dostupné lidem, kteří jsou právě venku. Přijď na pět minut, nebo zůstaň celé odpoledne.</p><p>Pečeme po malých dávkách, vaříme podle sezóny a každý den máme něco trochu jiného.</p></div><div class="quote">„Nejlepší stůl? Ten ve stínu, když zrovna kvetou stromy.“<span>— Lenka, provozní</span></div></div></section>
+<section id="visit" class="section visit"><div class="container visit-grid"><div><p class="eyebrow">Najdeš nás snadno</p><h2>Uprostřed parku.</h2><p>📍 U hlavní aleje, vedle dětského hřiště<br>🚲 Stojany pro kola přímo u bistra<br>🐕 Psi jsou vítáni na terase</p><a class="button" href="https://www.google.com/maps/search/?api=1&query=Park+Bistro" target="_blank" rel="noopener">Otevřít mapu</a></div><div class="hours"><h3>Otevírací doba</h3><p><b>Po–Pá</b><span>8:00–20:00</span></p><p><b>So–Ne</b><span>9:00–21:00</span></p><hr><p class="small">☕ Káva s sebou celý den<br>🥐 Snídaně do 11:30</p></div></div></section>
+</main><footer class="site-footer"><div class="container"><strong>🌿 Park Bistro</strong><span>Malé bistro. Velká pohoda.</span><span>© 2026</span></div></footer><script src="assets/js/app.js"></script>
+</body></html>
