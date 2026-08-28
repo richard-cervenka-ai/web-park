@@ -1,0 +1,10 @@
+{
+  "name": "Park Bistro Technology Showroom",
+  "short_name": "Park Bistro",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f7ef",
+  "theme_color": "#174d2a",
+  "description": "Interaktivní showroom moderních webových technologií.",
+  "icons": []
+}
