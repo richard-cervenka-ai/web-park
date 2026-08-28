@@ -1,51 +1,28 @@
 # Park Bistro
 
-Interaktivní webová aplikace pro malé bistro v parku.
+Interaktivní webová aplikace pro malé bistro v parku a zároveň ukázková laboratoř moderních webových technologií.
 
-## Co prototyp umí
+## Technologická stezka
 
-- responzivní minimalistické rozhraní inspirované moderním Apple-style UI principy,
-- menu s filtrováním podle kategorií,
-- e-shop s 10 suvenýry,
-- přidávání produktů do košíku,
-- změnu množství a výpočet ceny,
-- checkout formulář,
-- generování čísla objednávky,
-- uložení objednávek do `localStorage`,
-- rezervační formulář se jménem, e-mailem, datem, časem a počtem osob,
-- kontrolu kolize rezervací pro stejný čas v daném prohlížeči,
-- potvrzovací obrazovky a toast notifikace,
-- dynamický stav otevřeno/zavřeno podle času zařízení,
-- automatické nasazení přes GitHub Pages.
+Samostatná učební stránka je na `technologie.html`.
 
-## Struktura
+Obsahuje všech 35 původně požadovaných technologií. Každá lekce má:
 
-```text
-web-park/
-├── index.html
-├── README.md
-├── .gitignore
-├── assets/
-│   ├── css/style.css
-│   ├── js/app.js
-│   └── images/
-└── .github/workflows/pages.yml
-```
+- jasný název technologie,
+- živý experiment nebo přesně označenou simulaci/architekturu,
+- vysvětlení lidskou řečí,
+- malý úkol,
+- ukázku skutečného kódu,
+- stav splnění uložený v prohlížeči.
 
-## Spuštění lokálně
+## Technologie
 
-Stačí otevřít `index.html` v prohlížeči. Projekt nemá závislosti ani build krok.
+HTML5, CSS3, JavaScript, Responsive Web Design, Dark/Light Mode, Web Components, SVG, Canvas API, React, Vue, Svelte, Vite, Tailwind CSS, Bootstrap, Leaflet, OpenStreetMap, Google Maps API, External API, Weather API, Charts, localStorage, IndexedDB, SPA, PWA, Service Worker, Lottie, GSAP, WebGL/Three.js, Framer Motion, Authentication, Stripe, Email API, Database, GitHub Actions a GitHub Pages.
 
-## Demo režim
+## Proč mají některé lekce režim ARCHITEKTURA
 
-Rezervace a objednávky jsou prototypově ukládány do `localStorage` prohlížeče:
-
-- `park-bistro-reservations`
-- `park-bistro-orders`
-- `park-bistro-cart`
-
-Nejde o skutečný backend, skutečnou odeslanou e-mailovou zprávu ani platební bránu. Pro produkční provoz je potřeba přidat backend/databázi a napojit e-mailové a platební služby.
+GitHub Pages hostuje statický frontend. Databáze, autentizace, skutečné platby a odesílání e-mailů proto nejsou vydávány za hotový backend. Lekce ukazuje jejich skutečný tok a kde se v reálné aplikaci připojují.
 
 ## Deployment
 
-Každý push do `main` spouští GitHub Actions workflow `.github/workflows/pages.yml` a publikuje obsah repozitáře na GitHub Pages.
+Každý push do `main` spouští `.github/workflows/pages.yml` a publikuje web přes GitHub Pages.
