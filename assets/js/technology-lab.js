@@ -1,0 +1,49 @@
+/* Park Bistro Technology Lab — each station: live demo + explanation + task + code + label */
+(function(){
+'use strict';
+const techs=[
+['HTML5','🏗️','Obsah stánku','Rozklikni „Tajná nabídka“. HTML určuje, co stránka obsahuje a jaký význam mají jednotlivé části.','Otevři tajnou nabídku.','<details><summary>Tajná nabídka</summary>🍋 Domácí limonáda</details>','Klikací obsah bez JavaScriptu'],
+['CSS3','🎨','Vzhled stánku','Posuvníkem měníš vzhled živého stánku. CSS určuje barvy, velikosti, rozložení a animace.','Nastav zaoblení na maximum.','.card { border-radius: 32px; transition: .3s; }','Vzhled bez změny obsahu'],
+['JavaScript','⚡','Limonádový automat','Klikni na +. JavaScript reaguje na tvoji akci a mění stav stránky.','Dostaň počet na 5.','count++; price.textContent=count*45;','Reakce na událost'],
+['Responsive Web Design','📱','Zmenši okno','Změň šířku okna nebo otoč telefon. Rozložení se přizpůsobí zařízení.','Podívej se na stránku na mobilu.','@media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }','Stejný web pro různá zařízení'],
+['Dark / Light Mode','🌙','Přepínač nálady','Klikni na přepínač motivu. Nastavení se uloží a přežije obnovení stránky.','Přepni na tmavý režim a obnov stránku.','document.documentElement.dataset.theme="dark";','Uživatelské nastavení'],
+['Web Components','🧩','Vlastní tlačítko','Tady je vlastní HTML element vytvořený JavaScriptem.','Klikni na komponentu.','customElements.define("park-button", class extends HTMLElement {...});','Znovupoužitelný vlastní element'],
+['SVG','✏️','Vektorový strom','Strom je složený z kruhů a obdélníku, ne z fotografie.','Klikni na strom.','<svg><circle cx="50" cy="40" r="30"/></svg>','Ostrá grafika v každé velikosti'],
+['Canvas API','🖌️','Nakresli','Kresli myší do plátna. Canvas je plocha, do které může JavaScript kreslit.','Nakresli sluníčko.','ctx.fillRect(x,y,20,20);','Kreslení pixelů programem'],
+['React','⚛️','Počet kelímků','Stejný komponentový princip používá stav a po jeho změně aktualizuje rozhraní.','Zvyš počet na 3.','const [count,setCount]=useState(0);','Komponenty + state'],
+['Vue','🟢','Reaktivní objednávka','Vue propojuje data s HTML. Změna dat se projeví v rozhraní.','Přidej 2 limonády.','const count = ref(0);','Reaktivní data + template'],
+['Svelte','🟠','Jednoduchá komponenta','Svelte převádí komponentu při buildu na efektivní JavaScript.','Klikni třikrát.','let count=0; <button on:click={()=>count++}>+<\\/button>','Kompilace komponent'],
+['Vite','⚡','Rychlá dílna','Vite je nástroj pro vývoj a build moderního frontendu. Tato aplikace je připravena na build pipeline.','Zkontroluj build v GitHub Actions.','vite build','Dev server + produkční build'],
+['Tailwind CSS','🌬️','Třídy místo CSS souboru','Utility třídy skládají vzhled přímo u elementu.','Najdi třídy v ukázce.','class="p-4 rounded-xl shadow"','Utility-first CSS'],
+['Bootstrap','🅱️','Grid stánků','Bootstrap nabízí hotový responzivní grid a komponenty.','Změň počet sloupců.','class="container row col-md-4"','Hotové UI stavebnice'],
+['Leaflet','🗺️','Mapa stánku','Interaktivní mapa umožňuje kliknout na stánek a pracovat s mapovými vrstvami.','Klikni na značku stánku.','L.marker([50.08,14.43]).addTo(map);','Interaktivní mapová knihovna'],
+['OpenStreetMap','🌍','Mapa světa','Mapa může používat otevřená geografická data.','Najdi park.','https://www.openstreetmap.org','Otevřená mapová data'],
+['Google Maps API','📍','Navigace','API mapové služby může do aplikace přidat místo a navigaci.','Najdi, kde by stánek byl.','maps.google.com + API key','Mapová služba přes API'],
+['External API','🔌','Požádej jiný program','Aplikace pošle HTTP požadavek a dostane data zpět.','Klikni Načíst data.','fetch("/api/data").then(r=>r.json())','Komunikace programů'],
+['Weather API','☀️','Počasí v parku','Teplota v aplikaci přichází z externího API.','Obnov počasí.','fetch("https://api.open-meteo.com/...")','Živá data z internetu'],
+['Charts','📊','Návštěvnost','Graf převádí čísla na obrázek, který lze rychle pochopit.','Změň hodnotu a sleduj graf.','new Chart(ctx,{data:{...}})','Vizualizace dat'],
+['localStorage','💾','Paměť prohlížeče','Ulož nastavení nebo malou hodnotu. Po reloadu zůstane.','Ulož svou oblíbenou příchuť.','localStorage.setItem("flavour","malina");','Malý šuplík v prohlížeči'],
+['IndexedDB','🗄️','Mini databáze','IndexedDB umí ukládat větší množství strukturovaných dat přímo v zařízení.','Přidej položku do lokálního skladu.','indexedDB.open("ParkBistro",1);','Databáze v prohlížeči'],
+['SPA','🧭','Jedna stránka','Navigace mezi částmi aplikace probíhá bez klasického načtení celého dokumentu.','Klikni na Technologie a vrať se zpět.','history.pushState({},"","#lab");','Plynulá navigace'],
+['PWA','📲','Nainstaluj stánek','Web může vypadat a chovat se jako aplikace.','Použij nabídku Instalovat aplikaci, pokud ji prohlížeč nabízí.','manifest.webmanifest','Web + možnosti aplikace'],
+['Service Worker','🧑‍🔧','Offline pomocník','Service worker může zachytit požadavky a vrátit uložené soubory.','Odpoj internet a obnov uloženou stránku.','navigator.serviceWorker.register("sw.js");','Offline cache a pozadí'],
+['Lottie','🎬','Animovaný obrázek','Lottie přehrává vektorové animace definované daty.','Spusť animaci.','lottie.loadAnimation({container:el,...});','Lehká animace'],
+['GSAP','🚀','Létající limonáda','GSAP přesně řídí animace objektů v čase.','Klikni na limonádu.','gsap.to(el,{y:-80,duration:1});','Pokročilé animace'],
+['WebGL / Three.js','🧊','3D park','WebGL využívá grafický procesor. Three.js usnadňuje práci s 3D scénou.','Otoč 3D scénu.','new THREE.Scene();','3D v prohlížeči'],
+['Framer Motion','🎞️','Pohyb komponent','V Reactu lze animovat vstup, odchod i pohyb komponent.','Otevři kartu a sleduj vstup.','<motion.div initial={{opacity:0}} animate={{opacity:1}} />','Animace React UI'],
+['Authentication','🔐','Vstup do skladu','Přihlášení chrání část aplikace. Demo ukazuje princip, ne skutečné heslo.','Zkus demo přihlášení.','signIn(email,password)','Ověření identity'],
+['Stripe','💳','Pokladna','Platební služba řeší bezpečné zpracování platby. Tady je bezpečné demo flow.','Klikni na Pokladna.','stripe.redirectToCheckout({sessionId})','Platba přes externí službu'],
+['Email API','✉️','Potvrzení rezervace','Externí služba může po rezervaci odeslat e-mail.','Odešli testovací potvrzení.','fetch("/api/send-email",{method:"POST"})','Odeslání zprávy přes API'],
+['Database','🗃️','Rezervační kniha','Skutečná aplikace ukládá rezervace na serveru do databáze. Tady vidíš architekturu.','Prohlédni tok rezervace.','INSERT INTO reservations (...) VALUES (...)','Trvalá data na serveru'],
+['GitHub Actions','🤖','Robot staví web','Po změně kódu může GitHub automaticky spustit build a deployment.','Otevři Actions a podívej se na poslední běh.','on: push; jobs: deploy: ...','Automatizace'],
+['GitHub Pages','🌐','Web je online','GitHub Pages publikuje hotové statické soubory na veřejné adrese.','Otevři živý web v nové kartě.','pages: true','Statický hosting']
+];
+function esc(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+function render(){const grid=document.getElementById('tech-grid'); if(!grid)return; grid.innerHTML=techs.map((t,i)=>`<article class="tech-station" data-index="${i}"><div class="station-head"><span class="station-icon">${t[1]}</span><span class="tech-tag">${esc(t[0])}</span></div><h3>${esc(t[2])}</h3><p>${esc(t[3])}</p><div class="station-live"><b>🧪 Živý pokus</b><p>${esc(t[4])}</p><button class="station-action" type="button">Vyzkoušet</button><div class="station-result" hidden></div></div><div class="station-explain"><b>💡 Co se děje?</b><p>${esc(t[3])}</p><b>🎯 Malý úkol</b><p>${esc(t[4])}</p><b>🏷️ Technologie</b><p><code>${esc(t[0])}</code></p><button class="code-toggle" type="button">Ukázat kód</button><pre hidden><code>${esc(t[5])}</code></pre></div></article>`).join('');
+const ref=document.getElementById('reference-grid'); if(ref)ref.innerHTML=techs.map((t,i)=>`<button class="reference-chip" data-jump="${i}">${t[1]} ${esc(t[0])}</button>`).join('');
+attach();}
+function attach(){document.querySelectorAll('.station-action').forEach(btn=>btn.onclick=()=>{const card=btn.closest('.tech-station'),i=+card.dataset.index,t=techs[i],out=card.querySelector('.station-result'); out.hidden=false; out.innerHTML=`<strong>✓ ${esc(t[0])}</strong><br>${i===2?'Počet limonád: '+(card.dataset.n||0):i===1?'Zaoblení: vyzkoušej posuvník CSS níže.':'Experiment spuštěn! '+esc(t[4])}`; card.classList.add('visited'); localStorage.setItem('tech-'+i,'1'); updateProgress();});
+document.querySelectorAll('.code-toggle').forEach(b=>b.onclick=()=>{const pre=b.nextElementSibling;b.textContent=pre.hidden?'Skrýt kód':'Ukázat kód';pre.hidden=!pre.hidden;}); document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>document.querySelector(`.tech-station[data-index="${b.dataset.jump}"]`)?.scrollIntoView({behavior:'smooth',block:'center'}));}
+function updateProgress(){let n=techs.filter((_,i)=>localStorage.getItem('tech-'+i)).length;const c=document.getElementById('progress-count'),bar=document.getElementById('progress-bar');if(c)c.textContent=n+' / '+techs.length;if(bar)bar.style.width=(n/techs.length*100)+'%';}
+window.addEventListener('DOMContentLoaded',()=>{render();updateProgress(); const r=document.getElementById('radius'),box=document.getElementById('css-box');if(r&&box)r.oninput=()=>box.style.borderRadius=r.value+'px'; let q=1;const qty=document.getElementById('qty'),total=document.getElementById('total');document.getElementById('plus')?.addEventListener('click',()=>{q=Math.min(9,q+1);qty.textContent=q;total.textContent=q*45;});document.getElementById('minus')?.addEventListener('click',()=>{q=Math.max(1,q-1);qty.textContent=q;total.textContent=q*45;});document.querySelectorAll('.fw-btn').forEach(b=>b.onclick=()=>{const c=b.parentElement.querySelector('.fw-count');c.textContent=+c.textContent+1;});});
+})();
