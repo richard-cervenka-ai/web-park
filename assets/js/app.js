@@ -1,121 +1,30 @@
-const $ = (selector, root = document) => root.querySelector(selector);
-const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-const money = value => `${value.toLocaleString('cs-CZ')} Kč`;
-
-const products = [
-  {id:'mug',name:'Park Bistro hrnek',price:329,icon:'☕',desc:'Keramický hrnek s minimalistickým logem.'},
-  {id:'thermo',name:'Termohrnek To Go',price:449,icon:'🥤',desc:'Nerezový termohrnek na ranní procházku.'},
-  {id:'tote',name:'Plátěná taška',price:299,icon:'👜',desc:'Pevná bavlněná taška na nákup i piknik.'},
-  {id:'cap',name:'Kšiltovka Park',price:399,icon:'🧢',desc:'Lehká šestipanelová kšiltovka s výšivkou.'},
-  {id:'tee',name:'Tričko Park Club',price:599,icon:'👕',desc:'Měkké bavlněné tričko v unisex střihu.'},
-  {id:'poster',name:'Plakát Park Bistro',price:249,icon:'🖼️',desc:'Limitovaný ilustrátorský plakát A3.'},
-  {id:'beans',name:'Zrnková káva 250 g',price:279,icon:'🫘',desc:'House blend pro filtr i espresso.'},
-  {id:'notebook',name:'Notes Park',price:199,icon:'📓',desc:'Linkovaný zápisník pro nápady z parku.'},
-  {id:'pin',name:'Smaltovaný odznak',price:129,icon:'📍',desc:'Malý smaltovaný odznak Park Bistro.'},
-  {id:'blanket',name:'Pikniková deka',price:799,icon:'🧺',desc:'Sbalitelná deka pro dlouhá odpoledne v trávě.'}
-];
-
-let cart = JSON.parse(localStorage.getItem('park-bistro-cart') || '[]');
-const saveCart = () => localStorage.setItem('park-bistro-cart', JSON.stringify(cart));
-const cartQty = () => cart.reduce((sum, item) => sum + item.qty, 0);
-const cartTotal = () => cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-
-function showToast(message){
-  const toast = $('#toast');
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => toast.classList.remove('show'), 2200);
-}
-
-function renderProducts(){
-  $('#products-grid').innerHTML = products.map(p => `
-    <article class="product-card">
-      <div class="product-art" aria-hidden="true">${p.icon}</div>
-      <h3>${p.name}</h3><p>${p.desc}</p>
-      <div class="product-row"><span class="product-price">${money(p.price)}</span><button class="add-product" type="button" data-add="${p.id}">Přidat</button></div>
-    </article>`).join('');
-}
-
-function renderCart(){
-  $('#cart-count').textContent = cartQty();
-  $('#cart-total').textContent = money(cartTotal());
-  $('#checkout-total').textContent = money(cartTotal());
-  const host = $('#cart-items');
-  if(!cart.length){ host.innerHTML = '<div class="cart-empty"><div style="font-size:42px">🛍️</div><p>Košík je zatím prázdný.</p><a class="text-link" href="#shop" id="browse-shop">Prohlédnout obchod →</a></div>'; return; }
-  host.innerHTML = cart.map(item => `
-    <div class="cart-line">
-      <div class="cart-thumb">${item.icon}</div>
-      <div><h3>${item.name}</h3><p>${money(item.price)} / ks</p><div class="qty"><button type="button" data-dec="${item.id}" aria-label="Odebrat kus">−</button><span>${item.qty}</span><button type="button" data-inc="${item.id}" aria-label="Přidat kus">+</button></div></div>
-      <strong>${money(item.price * item.qty)}</strong>
-    </div>`).join('');
-}
-
-function openCart(){ $('#cart-drawer').classList.add('open'); $('#cart-drawer').setAttribute('aria-hidden','false'); $('#drawer-backdrop').hidden=false; document.body.classList.add('no-scroll'); }
-function closeCart(){ $('#cart-drawer').classList.remove('open'); $('#cart-drawer').setAttribute('aria-hidden','true'); $('#drawer-backdrop').hidden=true; document.body.classList.remove('no-scroll'); }
-function openModal(id){ $(id).hidden=false; document.body.classList.add('no-scroll'); }
-function closeModal(id){ $(id).hidden=true; document.body.classList.remove('no-scroll'); }
-
-function addToCart(id){
-  const product = products.find(p=>p.id===id); if(!product) return;
-  const existing = cart.find(item=>item.id===id);
-  if(existing) existing.qty += 1; else cart.push({...product,qty:1});
-  saveCart(); renderCart(); showToast(`${product.name} přidán do košíku`);
-}
-function changeQty(id,delta){
-  const item = cart.find(p=>p.id===id); if(!item) return;
-  item.qty += delta; if(item.qty<=0) cart = cart.filter(p=>p.id!==id);
-  saveCart(); renderCart();
-}
-
-// Mobile navigation
-const menuToggle = $('.menu-toggle'); const navLinks = $('.nav-links');
-menuToggle?.addEventListener('click',()=>{const open=navLinks.classList.toggle('is-open'); menuToggle.setAttribute('aria-expanded',String(open));});
-$$('.nav-links a').forEach(link=>link.addEventListener('click',()=>{navLinks.classList.remove('is-open');menuToggle?.setAttribute('aria-expanded','false');}));
-
-// Menu filters
-$$('.filter').forEach(button=>button.addEventListener('click',()=>{$$('.filter').forEach(b=>b.classList.remove('active'));button.classList.add('active');const filter=button.dataset.filter;$$('.menu-item').forEach(item=>{item.hidden=filter!=='all'&&item.dataset.category!==filter;});}));
-
-// Shop
-renderProducts(); renderCart();
-$('#products-grid').addEventListener('click',e=>{const id=e.target.closest('[data-add]')?.dataset.add;if(id)addToCart(id);});
-$('#cart-items').addEventListener('click',e=>{const inc=e.target.closest('[data-inc]')?.dataset.inc;const dec=e.target.closest('[data-dec]')?.dataset.dec;if(inc)changeQty(inc,1);if(dec)changeQty(dec,-1);if(e.target.id==='browse-shop')closeCart();});
-$('#cart-button').addEventListener('click',openCart); $('#close-cart').addEventListener('click',closeCart); $('#drawer-backdrop').addEventListener('click',closeCart);
-$('#clear-cart').addEventListener('click',()=>{cart=[];saveCart();renderCart();showToast('Košík byl vyprázdněn');});
-$('#checkout-button').addEventListener('click',()=>{if(!cart.length){showToast('Nejdřív přidej něco do košíku');return;}closeCart();openModal('#checkout-modal');});
-$$('.close-modal').forEach(b=>b.addEventListener('click',()=>closeModal('#checkout-modal')));
-
-// Checkout prototype
-$('#checkout-form').addEventListener('submit',e=>{
-  e.preventDefault();
-  const data = new FormData(e.currentTarget);
-  const order = {id:`PB-${Date.now().toString().slice(-6)}`,name:data.get('name'),email:data.get('email'),phone:data.get('phone'),items:cart,total:cartTotal(),createdAt:new Date().toISOString()};
-  const orders = JSON.parse(localStorage.getItem('park-bistro-orders') || '[]'); orders.push(order); localStorage.setItem('park-bistro-orders',JSON.stringify(orders));
-  cart=[];saveCart();renderCart();e.currentTarget.reset();closeModal('#checkout-modal');
-  $('#success-title').textContent='Objednávka přijata';$('#success-text').textContent=`Číslo objednávky ${order.id}. Potvrzení jsme připravili pro ${order.email}. Celkem ${money(order.total)}.`;openModal('#success-modal');
-});
-
-// Reservation system
-const reservationDate = $('#reservation-date');
-const today = new Date(); const isoToday = new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10); reservationDate.min=isoToday; reservationDate.value=isoToday;
-$('#reservation-form').addEventListener('submit',e=>{
-  e.preventDefault();
-  const data = new FormData(e.currentTarget); const date = data.get('date'); const time=data.get('time');
-  const key = `${date} ${time}`; const reservations=JSON.parse(localStorage.getItem('park-bistro-reservations')||'[]');
-  if(reservations.some(r=>r.slot===key)){showToast('Tento čas je v prototypu již rezervovaný. Vyber jiný.');return;}
-  const reservation={id:`R-${Date.now().toString().slice(-6)}`,slot:key,name:data.get('name'),email:data.get('email'),guests:data.get('guests'),note:data.get('note'),createdAt:new Date().toISOString()};
-  reservations.push(reservation);localStorage.setItem('park-bistro-reservations',JSON.stringify(reservations));
-  e.currentTarget.reset();reservationDate.value=isoToday;
-  $('#success-title').textContent='Rezervace potvrzena';$('#success-text').textContent=`Rezervace ${reservation.id}: ${reservation.guests}, ${date} v ${time}. Potvrzení jsme připravili pro ${reservation.email}.`;
-  openModal('#success-modal');
-});
-
-$('.close-success').addEventListener('click',()=>closeModal('#success-modal'));
-$$('.modal').forEach(modal=>modal.addEventListener('click',e=>{if(e.target===modal)closeModal(`#${modal.id}`);}));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeCart();closeModal('#checkout-modal');closeModal('#success-modal');}});
-
-// Dynamic opening status: illustrative hours for the demo venue.
-function updateOpenStatus(){
-  const now=new Date(); const day=now.getDay(); const hour=now.getHours()+now.getMinutes()/60; const weekend=day===0||day===6; const openHour=weekend?9:8; const closeHour=weekend?21:20; const isOpen=hour>=openHour&&hour<closeHour; const el=$('#open-status'); el.textContent=isOpen?`● Otevřeno · dnes do ${closeHour}:00`:`● Zavřeno · otevíráme v ${openHour}:00`; el.classList.toggle('closed',!isOpen);
-}
-updateOpenStatus();
+// Park Bistro showroom runtime
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const money=v=>`${v.toLocaleString('cs-CZ')} Kč`;
+const products=[['mug','Park Bistro hrnek',329,'☕'],['thermo','Termohrnek To Go',449,'🥤'],['tote','Plátěná taška',299,'👜'],['cap','Kšiltovka Park',399,'🧢'],['tee','Tričko Park Club',599,'👕'],['poster','Plakát Park Bistro',249,'🖼️'],['beans','Zrnková káva 250 g',279,'🫘'],['notebook','Notes Park',199,'📓'],['pin','Smaltovaný odznak',129,'📍'],['blanket','Pikniková deka',799,'🧺']].map(x=>({id:x[0],name:x[1],price:x[2],icon:x[3],desc:'Suvenýr z Park Bistro.'}));
+let cart=JSON.parse(localStorage.getItem('park-bistro-cart')||'[]');
+const saveCart=()=>localStorage.setItem('park-bistro-cart',JSON.stringify(cart)),cartQty=()=>cart.reduce((s,i)=>s+i.qty,0),cartTotal=()=>cart.reduce((s,i)=>s+i.price*i.qty,0);
+function showToast(m){const t=$('#toast');if(!t)return;t.textContent=m;t.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove('show'),2200)}
+function renderProducts(){$('#products-grid').innerHTML=products.map(p=>`<article class="product-card"><div class="product-art">${p.icon}</div><h3>${p.name}</h3><p>${p.desc}</p><div class="product-row"><b>${money(p.price)}</b><button class="add-product" data-add="${p.id}">Přidat</button></div></article>`).join('')}
+function renderCart(){$('#cart-count').textContent=cartQty();$('#cart-total').textContent=money(cartTotal());$('#checkout-total').textContent=money(cartTotal());$('#cart-items').innerHTML=cart.length?cart.map(i=>`<div class="cart-line"><div class="cart-thumb">${i.icon}</div><div><h3>${i.name}</h3><div class="qty"><button data-dec="${i.id}">−</button>${i.qty}<button data-inc="${i.id}">+</button></div></div><b>${money(i.price*i.qty)}</b></div>`).join(''):'<div class="cart-empty">🛍️<p>Košík je prázdný.</p></div>'}
+function openCart(){$('#cart-drawer').classList.add('open');$('#drawer-backdrop').hidden=false}function closeCart(){$('#cart-drawer').classList.remove('open');$('#drawer-backdrop').hidden=true}function openModal(id){$(id).hidden=false}function closeModal(id){$(id).hidden=true}
+renderProducts();renderCart();
+$('#products-grid').addEventListener('click',e=>{const id=e.target.closest('[data-add]')?.dataset.add;if(id){const p=products.find(x=>x.id===id),x=cart.find(x=>x.id===id);x?x.qty++:cart.push({...p,qty:1});saveCart();renderCart();showToast(`${p.name} přidán`)}});
+$('#cart-items').addEventListener('click',e=>{const id=e.target.closest('[data-inc]')?.dataset.inc||e.target.closest('[data-dec]')?.dataset.dec;if(!id)return;const x=cart.find(i=>i.id===id);x.qty+=(e.target.dataset.inc?1:-1);if(x.qty<1)cart=cart.filter(i=>i.id!==id);saveCart();renderCart()});
+$('#cart-button').onclick=openCart;$('#close-cart').onclick=closeCart;$('#drawer-backdrop').onclick=closeCart;$('#clear-cart').onclick=()=>{cart=[];saveCart();renderCart()};$('#checkout-button').onclick=()=>cart.length?(closeCart(),openModal('#checkout-modal')):showToast('Košík je prázdný');$$('.close-modal').forEach(b=>b.onclick=()=>closeModal('#checkout-modal'));
+$('#checkout-form').onsubmit=e=>{e.preventDefault();const d=new FormData(e.currentTarget),o={id:`PB-${Date.now().toString().slice(-6)}`,email:d.get('email'),total:cartTotal(),items:cart};const a=JSON.parse(localStorage.getItem('park-bistro-orders')||'[]');a.push(o);localStorage.setItem('park-bistro-orders',JSON.stringify(a));cart=[];saveCart();renderCart();closeModal('#checkout-modal');$('#success-title').textContent='Objednávka přijata';$('#success-text').textContent=`${o.id} · ${money(o.total)} · ${o.email}`;openModal('#success-modal')};$('.close-success').onclick=()=>closeModal('#success-modal');
+$$('.filter').forEach(b=>b.onclick=()=>{$$('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');$$('.menu-item').forEach(i=>i.hidden=b.dataset.filter!=='all'&&i.dataset.category!==b.dataset.filter)});
+const rd=$('#reservation-date'),dt=new Date(),today=new Date(dt-dt.getTimezoneOffset()*60000).toISOString().slice(0,10);rd.min=today;rd.value=today;$('#reservation-form').onsubmit=e=>{e.preventDefault();const d=new FormData(e.currentTarget),r={id:`R-${Date.now().toString().slice(-6)}`,slot:`${d.get('date')} ${d.get('time')}`,email:d.get('email'),guests:d.get('guests')},a=JSON.parse(localStorage.getItem('park-bistro-reservations')||'[]');if(a.some(x=>x.slot===r.slot))return showToast('Tento čas je již obsazený.');a.push(r);localStorage.setItem('park-bistro-reservations',JSON.stringify(a));if(window.indexedDB){const q=indexedDB.open('park-bistro-demo',1);q.onupgradeneeded=e=>e.target.result.createObjectStore('reservations',{keyPath:'id'});q.onsuccess=e=>e.target.result.transaction('reservations','readwrite').objectStore('reservations').put(r)}$('#success-title').textContent='Rezervace potvrzena';$('#success-text').textContent=`${r.id} · ${r.slot} · ${r.guests}`;openModal('#success-modal')};
+const mt=$('.menu-toggle'),nl=$('.nav-links');mt?.addEventListener('click',()=>{const o=nl.classList.toggle('is-open');mt.setAttribute('aria-expanded',o)});
+function updateOpen(){const n=new Date(),w=n.getDay()===0||n.getDay()===6,o=w?9:8,c=w?21:20,h=n.getHours()+n.getMinutes()/60;$('#open-status').textContent=h>=o&&h<c?`● Otevřeno · dnes do ${c}:00`:`● Zavřeno · otevíráme v ${o}:00`}updateOpen();
+const technologies=[['HTML5','Frontend','Sémantika, formuláře a validace','LIVE'],['CSS3','Frontend','Grid, Flexbox, animace a responsive design','LIVE'],['JavaScript','Frontend','Stav, košík, filtry a interakce','LIVE'],['Responsive Web Design','Frontend','Mobil, tablet i desktop','LIVE'],['Dark / Light Mode','Frontend','Přepínač vzhledu','LIVE'],['Web Components','Frontend','Vlastní browser komponenty','LIVE'],['SVG','Graphics','Vektorová grafika','LIVE'],['Canvas API','Graphics','Animovaná vizualizace','LIVE'],['React','Framework','Živá React komponenta','LIVE'],['Vue','Framework','Živá Vue komponenta','LIVE'],['Svelte','Framework','Kompilované komponenty bez runtime','ARCHITECTURE'],['Vite','Tooling','Moderní build pipeline','ARCHITECTURE'],['Tailwind CSS','CSS','Utility-first komponenta','LIVE'],['Bootstrap','CSS','Responsive grid + alert','LIVE'],['Leaflet','Maps','Interaktivní mapa','LIVE'],['OpenStreetMap','Maps','Mapová data','LIVE'],['Google Maps API','Maps','Integrace vyžaduje API key','API DEMO'],['External API','API','Fetch JSON dat','LIVE'],['Weather API','API','Aktuální počasí','LIVE'],['Charts','Data','Graf prodejů','LIVE'],['localStorage','Data','Košík a objednávky','LIVE'],['IndexedDB','Data','Lokální databáze rezervací','LIVE'],['SPA','Architecture','Bez reloadu stránky','LIVE'],['PWA','Mobile','Instalovatelná aplikace','LIVE'],['Service Worker','Mobile','Offline cache','LIVE'],['Lottie','Animation','Motion animační bod','LIVE'],['GSAP','Animation','Hero/scroll animace','LIVE'],['WebGL','Graphics','3D Three.js vrstva','LIVE'],['Framer Motion','Animation','React motion architektura','ARCHITECTURE'],['Authentication','Backend','Externí identity provider','ARCHITECTURE'],['Stripe','Payments','Bezpečný externí checkout','API DEMO'],['Email API','API','Potvrzovací e-mail','API DEMO'],['Database','Backend','Produkční databáze','ARCHITECTURE'],['GitHub Actions','DevOps','Automatický deployment','LIVE'],['GitHub Pages','Hosting','Statický hosting','LIVE']];
+function renderTech(){const nav=$('#tech-nav'),grid=$('#tech-grid'),cats=['Vše',...new Set(technologies.map(t=>t[1]))];nav.innerHTML=cats.map((c,i)=>`<button class="tech-chip ${i?'':'active'}" data-cat="${c}">${c}</button>`).join('');const draw=f=>{const list=f==='Vše'?technologies:technologies.filter(t=>t[1]===f);grid.innerHTML=list.map(t=>`<button class="tech-card" data-tech="${t[0]}"><span class="tech-badge">${t[0]}</span><h3>${t[0]}</h3><p>${t[2]}</p><span class="tech-status">${t[3]} · klikni pro demo</span></button>`).join('')};draw('Vše');nav.onclick=e=>{const b=e.target.closest('[data-cat]');if(!b)return;$$('.tech-chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');draw(b.dataset.cat)};grid.onclick=e=>{const b=e.target.closest('[data-tech]');if(b)showTech(b.dataset.tech)};$('#tech-count').textContent=technologies.length}
+function showTech(name){const p=$('#demo-panel'),d=document.createElement('div');p.innerHTML=`<p class="eyebrow">TECHNOLOGY · ${name.toUpperCase()}</p><h3>${name}</h3><p>${technologies.find(t=>t[0]===name)?.[2]||''}</p>`;d.className='demo-box';p.appendChild(d);if(name==='Dark / Light Mode'){d.innerHTML='<button class="theme-toggle" onclick="document.body.classList.toggle(\'dark-site\')">◐ Přepnout režim</button>'}else if(name==='Canvas API'){d.innerHTML='<canvas id="mini-canvas" width="900" height="180" style="width:100%;background:#08130b;border-radius:12px"></canvas>';miniCanvas()}else if(name==='React'){d.id='tech-react';if(window.ReactDOM)ReactDOM.createRoot(d).render(React.createElement('button',{className:'button',onClick:()=>showToast('React state funguje')},'⚛️ React state'))}else if(name==='Vue'){d.innerHTML='<div id="tech-vue"></div>';Vue.createApp({data:()=>({n:0}),template:'<button class="button" @click="n++">🟢 Vue kliknutí: {{n}}</button>'}).mount('#tech-vue')}else if(name==='Leaflet'||name==='OpenStreetMap'){d.innerHTML='<div id="tech-map" class="map-demo"></div>';setTimeout(()=>makeMap('tech-map'),50)}else if(name==='Google Maps API'){d.innerHTML='<strong>API DEMO</strong><p>Vyžaduje vlastní Google Maps API key. Integrace je připravená jako externí služba.</p>'}else if(name==='Weather API'||name==='External API'){d.innerHTML='Načítám JSON přes fetch()…';loadWeather(d)}else if(name==='Charts'){d.innerHTML='<canvas id="tech-chart" height="120"></canvas>';new Chart($('#tech-chart'),{type:'bar',data:{labels:['Po','Út','St','Čt','Pá','So','Ne'],datasets:[{label:'objednávky',data:[31,42,38,51,62,91,78]}]}})}else if(name==='GSAP'){d.innerHTML='<div id="gsap-ball" style="font-size:48px">🌿</div>';gsap.fromTo('#gsap-ball',{x:0},{x:450,duration:1.4,yoyo:true,repeat:1})}else if(name==='WebGL'){d.innerHTML='<div id="three-demo" style="height:220px;background:#07140b;border-radius:14px"></div>';makeThree()}else if(name==='PWA'||name==='Service Worker'){d.innerHTML='<strong>✓ PWA ready</strong><p>manifest.webmanifest + sw.js jsou součástí projektu.</p>'}else if(name==='Lottie'){d.innerHTML='<div style="font-size:70px;text-align:center">🌱</div><p>Lottie integration point pro JSON motion animace.</p>'}else if(['Stripe','Email API','Authentication','Database','Svelte','Framer Motion','Vite'].includes(name)){d.innerHTML=`<div class="architecture">${name}: ARCHITECTURE DEMO\n\nFrontend → API → Provider / Service → data\n\nGitHub Pages hostuje frontend; backendová vrstva je externí.</div>`}else d.innerHTML=`<strong>✓ ${name} LIVE</strong><p>Technologie je použita v aplikaci a tato karta dokumentuje její roli.</p>`;p.scrollIntoView({behavior:'smooth',block:'center'})}
+function miniCanvas(){const c=$('#mini-canvas'),x=c.getContext('2d'),a=Array.from({length:70},()=>({x:Math.random()*c.width,y:Math.random()*c.height,v:(Math.random()-.5)}));function f(){x.clearRect(0,0,c.width,c.height);x.fillStyle='#3d8f4e';a.forEach(p=>{p.y+=p.v;if(p.y<0||p.y>c.height)p.v*=-1;x.beginPath();x.arc(p.x,p.y,2,0,7);x.fill()});requestAnimationFrame(f)}f()}
+function makeMap(id){if(!window.L)return;const m=L.map(id).setView([50.0755,14.4378],14);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors'}).addTo(m);L.marker([50.0755,14.4378]).addTo(m).bindPopup('🌿 Park Bistro').openPopup()}
+function loadWeather(el){fetch('https://api.open-meteo.com/v1/forecast?latitude=50.0755&longitude=14.4378&current=temperature_2m,wind_speed_10m&timezone=Europe%2FPrague').then(r=>r.json()).then(d=>el.innerHTML=`🌤️ <strong>${d.current.temperature_2m} °C</strong> · vítr ${d.current.wind_speed_10m} km/h`).catch(()=>el.textContent='API není dostupné')}
+function makeThree(){if(!window.THREE)return;const h=$('#three-demo'),s=new THREE.Scene(),c=new THREE.PerspectiveCamera(60,h.clientWidth/220,.1,100),r=new THREE.WebGLRenderer({antialias:true});r.setSize(h.clientWidth,220);h.appendChild(r.domElement);const m=new THREE.Mesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshNormalMaterial({wireframe:true}));s.add(m);c.position.z=3;(function a(){m.rotation.x+=.008;m.rotation.y+=.01;r.render(s,c);requestAnimationFrame(a)})()}
+renderTech();if(window.L)makeMap('park-map');loadWeather($('#weather-demo'));if(window.Chart)new Chart($('#sales-chart'),{type:'line',data:{labels:['8','10','12','14','16','18','20'],datasets:[{data:[12,28,44,31,57,76,49],tension:.35}]},options:{plugins:{legend:{display:false}}}});if(window.React&&window.ReactDOM){const r=ReactDOM.createRoot($('#react-demo'));function R(){const[n,setN]=React.useState(0);return React.createElement('button',{className:'button',onClick:()=>setN(n+1)},`⚛️ React kliknutí: ${n}`)}r.render(React.createElement(R))}if(window.Vue)Vue.createApp({data:()=>({n:0}),template:'<button class="button" @click="n++">🟢 Vue kliknutí: {{n}}</button>'}).mount('#vue-demo');if(window.gsap)gsap.from('.hero h1',{y:35,opacity:0,duration:1});
+const theme=$('#theme-toggle');theme?.addEventListener('click',()=>{document.body.classList.toggle('dark-site');localStorage.setItem('park-theme',document.body.classList.contains('dark-site')?'dark':'light')});if(localStorage.getItem('park-theme')==='dark')document.body.classList.add('dark-site');
+const canvas=$('#park-canvas');if(canvas){const x=canvas.getContext('2d'),a=Array.from({length:128},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,v:(Math.random()-.5)*.4,r:1+Math.random()*3}));(function f(){x.clearRect(0,0,canvas.width,canvas.height);x.fillStyle='#3d8f4e';a.forEach(p=>{p.y+=p.v;if(p.y<0||p.y>canvas.height)p.v*=-1;x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()});requestAnimationFrame(f)})()}
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
